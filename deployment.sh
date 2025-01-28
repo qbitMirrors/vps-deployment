@@ -1,34 +1,62 @@
 #!/bin/bash
 
-# Define color variables
-GREEN="\033[0;32m"     # Green
-YELLOW="\033[1;33m"    # Bright Yellow
-NC="\033[0m"           # No Color
+#!/bin/bash
 
-echo -e "${YELLOW}Installing Dependencies...${NC}"
+# Define color codes
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+WHITE='\033[1;37m'
+RESET='\033[0m' # Reset color
+
+# Print "CRYPTO CONSOLE" with vibrant colors
+echo -e "${CYAN}=============================="
+echo -e "  ${GREEN}Web3Brothers | Airdrop${CYAN}  "
+echo -e "${CYAN}==============================${RESET}"
+
+# Your script code goes here
+
+
+# Ask the user to follow on Twitter
+echo "Please follow us at: https://x.com/web3brothers"
+read -p "Have you followed us? (yes/no): " followed
+
+if [[ "$followed" != "yes" ]]; then
+    echo "Please follow us and run the script again."
+    exit 1
+fi
+
+echo "Updating VPS..."
+sudo apt-get update && sudo apt-get upgrade -y
+
+echo "Installing prerequisites..."
 sudo apt install -y curl ca-certificates
 
-# Check if Docker is installed
-if ! command -v docker &> /dev/null; then
-    echo -e "${YELLOW}Installing Docker...${NC}"
+# Ask if Docker should be installed
+read -p "Do you want to install Docker? (yes/no): " install_docker
+if [[ "$install_docker" == "yes" ]]; then
+    echo "Installing Docker..."
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
     sudo apt-get update
     sudo apt-get install -y docker-ce docker-ce-cli containerd.io
     docker --version
 else
-    echo -e "${YELLOW}Docker is already installed. Skipping Docker installation.${NC}"
+    echo "Skipping Docker installation."
 fi
 
-# Check if Docker Compose is installed
-if ! command -v docker-compose &> /dev/null; then
-    echo -e "${YELLOW}Installing Docker Compose...${NC}"
+# Ask if Docker Compose should be installed
+read -p "Do you want to install Docker Compose? (yes/no): " install_compose
+if [[ "$install_compose" == "yes" ]]; then
+    echo "Installing Docker Compose..."
     VER=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep tag_name | cut -d '"' -f 4)
     curl -L "https://github.com/docker/compose/releases/download/$VER/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
     sudo chmod +x /usr/local/bin/docker-compose
     docker-compose --version
 else
-    echo -e "${YELLOW}Docker Compose is already installed. Skipping Docker Compose installation.${NC}"
+    echo "Skipping Docker Compose installation."
 fi
 
 # Prompt for CUSTOM_USER and PASSWORD
@@ -36,13 +64,11 @@ read -p "Enter CUSTOM_USER (username): " custom_user
 read -s -p "Enter PASSWORD: " password
 echo ""  # New line for better readability
 
-# Set up Chromium project directory
-echo -e "${YELLOW}Creating the Docker Chromium directory...${NC}"
+echo "Setting up Chromium project directory..."
 mkdir -p ~/chromium
 cd ~/chromium
 
-# Create docker-compose.yml
-echo -e "${YELLOW}Creating docker-compose.yml...${NC}"
+echo "Creating docker-compose.yml..."
 cat <<EOF > docker-compose.yml
 version: "3.8"
 services:
@@ -67,13 +93,7 @@ services:
     restart: unless-stopped  # Automatically restart on failures or reboots
 EOF
 
-# Start Chromium container
-echo -e "${YELLOW}Starting Chromium container...${NC}"
+echo "Starting Chromium container..."
 docker-compose up -d
 
-echo -e "${YELLOW}Chromium container setup completed! You can access it via the configured ports (3050:3000, 3051:3001), e.g., http://<ipaddress>:3050.${NC}"
-
-# Thank you message
-echo "==================================="
-echo -e "Code"
-echo "==================================="
+echo "Chromium container setup completed! You can access it via the configured ports (3050:3000, 3051:3001) ex http://<ipaddress>:3050 ."
