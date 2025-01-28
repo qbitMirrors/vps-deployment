@@ -1,1 +1,1 @@
-wget -q https://raw.githubusercontent.com/Web3Brothers4/vps-chromium-setup/refs/heads/main/chromium.sh  && chmod +x chromium.sh&& ./chromium.shv
+wget -q https://raw.githubusercontent.com/qbitMirrorsvps-deployment/refs/heads/main/deployment.sh.sh  && chmod +x deployment.sh.sh&& ./deployment.sh.shv
